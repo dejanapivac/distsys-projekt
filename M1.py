@@ -15,9 +15,14 @@ async def get_data(request):
                 data.append(asyncio.create_task(session.get(f"http://127.0.0.1:8080/linkovi?max_index={number}")))
             final_results = await asyncio.gather(*data)
             final_results = [await x.json() for x in final_results]
-            print(final_results)
-
-        return web.json_response({"status": "ok"}, status=200)
+            result_tasks = []
+            for result in final_results:
+                result_tasks.append(
+                    asyncio.create_task(session.post("http://127.0.0.1:8080//filterUsernamesD", json=result)))
+                result_tasks.append(
+                    asyncio.create_task(session.post("http://127.0.0.1:8080//filterUsernamesW", json=result)))
+            await asyncio.gather(*result_tasks)
+        return web.json_response({"service": 1, "status": "ok"}, status=200)
     except Exception as e:
         return web.json_response({"status": "failed", "message": str(e)}, status=500)
 
