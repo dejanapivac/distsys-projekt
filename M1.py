@@ -18,9 +18,9 @@ async def get_data(request):
             result_tasks = []
             for result in final_results:
                 result_tasks.append(
-                    asyncio.create_task(session.post("http://127.0.0.1:8080//filterUsernamesD", json=result)))
+                    asyncio.create_task(session.post("http://127.0.0.1:8080/filterUsernamesD", json=result)))
                 result_tasks.append(
-                    asyncio.create_task(session.post("http://127.0.0.1:8080//filterUsernamesW", json=result)))
+                    asyncio.create_task(session.post("http://127.0.0.1:8080/filterUsernamesW", json=result)))
             await asyncio.gather(*result_tasks)
         return web.json_response({"service": 1, "status": "ok"}, status=200)
     except Exception as e:
