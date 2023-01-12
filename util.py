@@ -1,12 +1,12 @@
 def filter_json(json, letter):
     result = []
     for index, data in enumerate(json["usernames"]):
-        if data.lower().startsWith(letter):
+        if data[0].lower() == letter:
             dictionary = {
                 "username": data,
-                "githublinkovi": json["githubLinks"][index],
-                "filename": json["filename"][index],
-                "content": json["content"][index],
+                "githubLink": json["githubLinks"][index],
+                "filename": json["filenames"][index],
+                "content": json["contents"][index],
             }
             result.append(dictionary)
     return result

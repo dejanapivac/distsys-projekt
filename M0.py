@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 
 import aiosqlite
 from aiohttp import web
@@ -24,16 +25,21 @@ async def get_fake_db_dataset():
                         content = json_dict["content"]
                         gh_link = "https://github.com/" + user_name + "/" + repo_name
                         data.append((user_name, gh_link, file_name, content))
-                    await db.executemany("INSERT INTO githubLinkovi(username, ghlink, filename, content) VALUES (?, ?, ?, ?)",
-                                   data)
-                print("ja")
+                    await db.executemany(
+                        "INSERT INTO githubLinkovi(username, ghlink, filename, content) VALUES (?, ?, ?, ?)",
+                        data)
                 await db.commit()
+
 
 def get_list_of_id(max_index):
     list = []
-    for i in range(max_index, max_index+100):
+    for i in range(max_index, max_index + 100):
         list.append(i)
     return list
+
+
+def make_file():
+    os.makedirs('files', exist_ok=True)
 
 
 @routes.get("/linkovi")
@@ -51,13 +57,13 @@ async def get_linkovi_db(request):
                 githubLinks.append(row[2])
                 fileNames.append(row[3])
                 content.append(row[4])
-            print(user_names)
-            data = {"usernames": user_names, "githubLinks": githubLinks, "filenames": fileNames, "content": content}
+            data = {"usernames": user_names, "githubLinks": githubLinks, "filenames": fileNames, "contents": content}
         return web.json_response({"service": 0, "data": data}, status=200)
 
 
 app = web.Application()
 asyncio.run(get_fake_db_dataset())
+make_file()
 
 app.router.add_routes(routes)
 
